@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ColdWater RP</title>
+<style>
+:root{--bg:#070d15;--panel:rgba(12,22,34,.78);--line:rgba(120,200,230,.18);--cyan:#40cee0;--text:#e8f0f6;--muted:#8fa3b5;--gold:#e8be5a}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Segoe UI",Tahoma,sans-serif;overflow:hidden;user-select:none}
+/* Ville de nuit dessinée en CSS : ciel, immeubles, fenêtres qui s'allument. */
+#sky{position:fixed;inset:0;background:radial-gradient(ellipse at 70% 110%,#1d3b5c 0%,#0b1522 55%,#05090f 100%)}
+#city{position:fixed;left:0;right:0;bottom:0;height:62%;display:flex;align-items:flex-end;gap:6px;padding:0 2vw;filter:drop-shadow(0 -10px 40px rgba(64,206,224,.08))}
+.b{flex:1;background:linear-gradient(#0d1826,#09111b);position:relative;border-top:2px solid rgba(64,206,224,.15)}
+.w{position:absolute;width:5px;height:7px;background:#f6d27a;opacity:0;animation:lit 6s infinite}
+@keyframes lit{0%,100%{opacity:0}40%,70%{opacity:.85}}
+#fog{position:fixed;left:-10%;right:-10%;bottom:-5%;height:40%;background:radial-gradient(ellipse at center,rgba(64,206,224,.08),transparent 70%);animation:drift 18s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translateX(-4%)}to{transform:translateX(4%)}}
+/* Contenu */
+#main{position:fixed;left:6vw;top:12vh;max-width:640px}
+#brand{font-size:72px;font-weight:800;letter-spacing:6px;line-height:1}
+#brand span{color:var(--cyan)}
+#tag{color:var(--muted);letter-spacing:4px;margin-top:10px;font-size:15px;text-transform:uppercase}
+#server{margin-top:26px;font-size:18px}
+#map{color:var(--muted);font-size:14px;margin-top:4px}
+#tips{margin-top:44px;padding:18px 22px;background:var(--panel);border-left:3px solid var(--gold);border-radius:6px;min-height:84px;backdrop-filter:blur(6px)}
+#tips small{color:var(--gold);letter-spacing:2px;font-size:11px;font-weight:700}
+#tip{margin-top:6px;font-size:16px;line-height:1.45;transition:opacity .5s}
+/* Progression */
+#load{position:fixed;left:6vw;right:6vw;bottom:7vh}
+#status{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-bottom:8px}
+#bar{height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
+#fill{height:100%;width:2%;background:linear-gradient(90deg,var(--cyan),#8ae6f2);box-shadow:0 0 14px var(--cyan);transition:width .4s}
+/* Lecteur de musique */
+#player{position:fixed;right:4vw;top:12vh;width:330px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;backdrop-filter:blur(8px)}
+#player h4{font-size:11px;letter-spacing:3px;color:var(--muted);font-weight:700}
+#now{margin-top:8px;font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#eq{display:flex;gap:3px;height:18px;align-items:flex-end;margin-top:10px}
+#eq i{flex:1;background:var(--cyan);opacity:.75;border-radius:2px;animation:eq 1s infinite ease-in-out}
+#eq.paused i{animation-play-state:paused;opacity:.25}
+@keyframes eq{0%,100%{height:20%}50%{height:100%}}
+#ctrl{display:flex;gap:8px;margin-top:14px;align-items:center}
+button{background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--text);width:40px;height:40px;border-radius:50%;font-size:15px;cursor:pointer}
+button:hover{background:rgba(64,206,224,.2);border-color:var(--cyan)}
+#play{width:48px;height:48px;font-size:18px;background:var(--cyan);color:#06222a;border:none}
+#vol{flex:1;accent-color:var(--cyan)}
+#list{margin-top:12px;max-height:150px;overflow:auto}
+#list div{padding:6px 8px;border-radius:6px;font-size:13px;color:var(--muted);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#list div:hover{background:rgba(255,255,255,.05)}
+#list div.on{color:var(--cyan);background:rgba(64,206,224,.08)}
+#yt{position:fixed;width:200px;height:200px;left:-400px;top:0;opacity:0;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="sky"></div><div id="fog"></div><div id="city"></div>
+<div id="main">
+  <div id="brand">COLD<span>WATER</span></div>
+  <div id="tag">Serious RP · Une ville, votre histoire</div>
+  <div id="server">Connexion au serveur…</div>
+  <div id="map"></div>
+  <div id="tips"><small>LE SAVIEZ-VOUS ?</small><div id="tip"></div></div>
+</div>
+<div id="player">
+  <h4>♪ RADIO COLDWATER</h4>
+  <div id="now">—</div>
+  <div id="eq"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div id="ctrl">
+    <button id="prev" title="Précédent">⏮</button>
+    <button id="play" title="Lecture / pause">⏸</button>
+    <button id="next" title="Suivant">⏭</button>
+    <button id="mute" title="Couper le son">🔊</button>
+    <input id="vol" type="range" min="0" max="100" value="40" title="Volume">
+  </div>
+  <div id="list"></div>
+</div>
+<div id="load">
+  <div id="status"><span id="stext">Préparation…</span><span id="pct">0 %</span></div>
+  <div id="bar"><div id="fill"></div></div>
+</div>
+<div id="yt"><div id="ytp"></div></div>
+<script src="playlist.js"></script>
+<script>
+/* ===== À PERSONNALISER ===================================================
+   PLAYLIST : liens YouTube (vidéo) ou fichiers audio directs (.mp3 / .ogg).
+   ======================================================================== */
+var PLAYLIST=(window.CW_PLAYLIST||[]).slice(); /* liste dans playlist.js */
+var TIPS=[
+  "Menu C : actions, facture, appels d’urgence et outils de votre métier.",
+  "F4 › Accueil : vos personnages, la ville et les avantages VIP.",
+  "Prenez votre service à la pointeuse de votre entreprise pour être payé.",
+  "Le téléphone s’achète chez Zone Tech et Central Mobile.",
+  "Un problème ? Menu C › Aide du staff ouvre un ticket.",
+  "La police peut vous verbaliser : les amendes arrivent sur votre téléphone.",
+  "Restez dans votre personnage : le Serious RP, c’est une histoire commune."
+];
+/* ===== Décor ============================================================ */
+(function(){var c=document.getElementById('city');for(var i=0;i<34;i++){var b=document.createElement('div');b.className='b';b.style.height=(25+Math.random()*70)+'%';b.style.flex=(0.6+Math.random()*1.4);for(var k=0;k<14;k++){var w=document.createElement('i');w.className='w';w.style.left=(10+Math.random()*75)+'%';w.style.top=(5+Math.random()*85)+'%';w.style.animationDelay=(Math.random()*6)+'s';w.style.animationDuration=(4+Math.random()*6)+'s';b.appendChild(w)}c.appendChild(b)}})();
+var ti=0,tipEl=document.getElementById('tip');function nextTip(){tipEl.style.opacity=0;setTimeout(function(){tipEl.textContent=TIPS[ti++%TIPS.length];tipEl.style.opacity=1},500)}nextTip();setInterval(nextTip,7000);
+/* ===== Progression (appels de Garry's Mod) ============================== */
+var total=0,needed=0;function pct(p){p=Math.max(2,Math.min(100,p));document.getElementById('fill').style.width=p+'%';document.getElementById('pct').textContent=Math.round(p)+' %'}
+window.GameDetails=function(name,url,map,max,steamid,gm,volume){document.getElementById('server').textContent=name||'ColdWater RP';document.getElementById('map').textContent=(map||'')+(max?' · '+max+' places':'');if(volume!==undefined&&!localStorage.getItem('cw_vol'))setVol(Math.round(volume*100*0.6))};
+window.SetFilesTotal=function(n){total=n;pct(5)};
+window.SetFilesNeeded=function(n){needed=n;if(total>0)pct(5+90*(1-needed/total))};
+window.DownloadingFile=function(f){document.getElementById('stext').textContent='Téléchargement : '+String(f).split('/').pop()};
+window.SetStatusChanged=function(s){document.getElementById('stext').textContent=s;if(/Sending client info/i.test(s))pct(96);if(/Client info sent|Starting Lua/i.test(s))pct(99)};
+/* ===== Lecteur ========================================================== */
+var idx=0,playing=true,muted=false,yt=null,audio=new Audio(),ytReady=false,volume=+(localStorage.getItem('cw_vol')||40);
+document.getElementById('vol').value=volume;
+function ytId(u){var m=String(u).match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([\w-]{11})/);return m&&m[1]}
+function list(){var l=document.getElementById('list');l.innerHTML='';PLAYLIST.forEach(function(t,i){var d=document.createElement('div');d.textContent=(i+1)+'. '+t.title;if(i===idx)d.className='on';d.onclick=function(){load(i)};l.appendChild(d)});if(!PLAYLIST.length)l.innerHTML='<div>Playlist vide</div>'}
+function ui(){document.getElementById('play').textContent=playing?'⏸':'▶';document.getElementById('eq').className=playing&&!muted?'':'paused';document.getElementById('mute').textContent=muted||volume==0?'🔇':'🔊';var t=PLAYLIST[idx];document.getElementById('now').textContent=t?t.title:'—';list()}
+function applyVol(){var v=muted?0:volume;audio.volume=v/100;if(yt&&ytReady){yt.setVolume(v);if(muted)yt.mute();else yt.unMute()}}
+function setVol(v){volume=v;document.getElementById('vol').value=v;try{localStorage.setItem('cw_vol',v)}catch(e){}applyVol();ui()}
+function load(i){if(!PLAYLIST.length)return;idx=(i+PLAYLIST.length)%PLAYLIST.length;var t=PLAYLIST[idx],id=ytId(t.url);audio.pause();if(yt&&ytReady)yt.stopVideo();
+  if(id){if(ytReady){yt.loadVideoById(id);if(!playing)setTimeout(function(){yt.pauseVideo()},300)}else pendingYT=id}else{audio.src=t.url;if(playing)audio.play().catch(function(){})}
+  applyVol();ui()}
+var pendingYT=null;
+audio.onended=function(){load(idx+1)};
+document.getElementById('play').onclick=function(){playing=!playing;var id=ytId((PLAYLIST[idx]||{}).url);if(id&&yt&&ytReady){playing?yt.playVideo():yt.pauseVideo()}else{playing?audio.play().catch(function(){}):audio.pause()}ui()};
+document.getElementById('next').onclick=function(){load(idx+1)};
+document.getElementById('prev').onclick=function(){load(idx-1)};
+document.getElementById('mute').onclick=function(){muted=!muted;applyVol();ui()};
+document.getElementById('vol').oninput=function(){muted=false;setVol(+this.value)};
+window.onYouTubeIframeAPIReady=function(){yt=new YT.Player('ytp',{width:200,height:200,playerVars:{autoplay:1,controls:0,playsinline:1},events:{
+  onReady:function(){ytReady=true;applyVol();if(pendingYT){yt.loadVideoById(pendingYT);pendingYT=null}},
+  onStateChange:function(e){if(e.data===0)load(idx+1)},
+  onError:function(){load(idx+1)}}})};
+if(PLAYLIST.some(function(t){return ytId(t.url)})){var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s)}
+/* Mode « playlist YouTube » (playlist.js : CW_YT_PLAYLIST) : toute la playlist, en aléatoire. */
+var YTLIST=window.CW_YT_PLAYLIST&&String(window.CW_YT_PLAYLIST).match(/(?:list=)?([\w-]{12,})/);
+if(YTLIST){
+  YTLIST=YTLIST[1];
+  window.onYouTubeIframeAPIReady=function(){yt=new YT.Player('ytp',{width:200,height:200,playerVars:{autoplay:1,controls:0,playsinline:1,listType:'playlist',list:YTLIST},events:{
+    onReady:function(){ytReady=true;yt.setShuffle(true);yt.setLoop(true);var n=(yt.getPlaylist()||[]).length;yt.playVideoAt(n?Math.floor(Math.random()*n):0);applyVol()},
+    onStateChange:function(){var d=yt.getVideoData&&yt.getVideoData();if(d&&d.title)document.getElementById('now').textContent=d.title},
+    onError:function(){yt.nextVideo()}}})};
+  ui=function(){document.getElementById('play').textContent=playing?'⏸':'▶';document.getElementById('eq').className=playing&&!muted?'':'paused';document.getElementById('mute').textContent=muted||volume==0?'🔇':'🔊';document.getElementById('list').innerHTML='<div class="on">Playlist YouTube · ordre aléatoire</div>'};
+  document.getElementById('play').onclick=function(){playing=!playing;if(ytReady){playing?yt.playVideo():yt.pauseVideo()}ui()};
+  document.getElementById('next').onclick=function(){if(ytReady)yt.nextVideo()};
+  document.getElementById('prev').onclick=function(){if(ytReady)yt.previousVideo()};
+  var s2=document.createElement('script');s2.src='https://www.youtube.com/iframe_api';document.head.appendChild(s2);
+  ui();
+}else{
+/* Ordre aléatoire à chaque connexion. */
+for(var i=PLAYLIST.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=PLAYLIST[i];PLAYLIST[i]=PLAYLIST[j];PLAYLIST[j]=tmp}
+load(0);ui();
+}
+</script>
+</body>
+</html>
