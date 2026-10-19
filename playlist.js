@@ -1,22 +1,19 @@
-// Musique de l'écran de chargement ColdWater RP (ordre aléatoire à chaque connexion).
-// Une ligne par morceau : titre affiché + lien YouTube ou lien audio direct (.mp3, radio).
-// Option : mettre un identifiant de playlist YouTube dans CW_YT_PLAYLIST pour jouer toute une playlist.
+// Musique de l'écran de chargement ColdWater RP : webradios 100 % musique (sans pub vidéo), station au hasard à chaque connexion.
+// « Suivant » passe à une autre radio. Une ligne par radio : nom affiché + lien du flux (https obligatoire).
 window.CW_YT_PLAYLIST = "";
 window.CW_PLAYLIST = [
-  { title: "Linkin Park — In The End", url: "https://www.youtube.com/watch?v=eVTXPUF4Oz4" },
-  { title: "Linkin Park — Numb", url: "https://www.youtube.com/watch?v=kXYiU_JCYtU" },
-  { title: "System Of A Down — Chop Suey!", url: "https://www.youtube.com/watch?v=CSvFpBOe8eY" },
-  { title: "Crazy Town — Butterfly", url: "https://www.youtube.com/watch?v=6FEDrU85FLE" },
-  { title: "The Calling — Wherever You Will Go", url: "https://www.youtube.com/watch?v=iAP9AF6DCu4" },
-  { title: "System Of A Down — Toxicity", url: "https://www.youtube.com/watch?v=iywaBOMvYLI" },
-  { title: "Tiakola — Gasolina", url: "https://www.youtube.com/watch?v=uF0utV0ZQAs" },
-  { title: "Jungeli — Petit génie", url: "https://www.youtube.com/watch?v=iANdoKq5ty4" },
-  { title: "MZ — Les princes", url: "https://www.youtube.com/watch?v=sLPwtG-R0gE" },
-  { title: "Damso — Mosaïque solitaire", url: "https://www.youtube.com/watch?v=i2v2hEXwVgQ" },
-  { title: "Damso — Ipséité", url: "https://www.youtube.com/watch?v=Rvr8BbIRW5I" },
-  { title: "Damso — Smog", url: "https://www.youtube.com/watch?v=HoTYytnjCb0" },
-  { title: "Damso — Amnésie", url: "https://www.youtube.com/watch?v=bV5yKjTkTdQ" },
-  { title: "Bigflo & Oli — Les dieux et les rois", url: "https://www.youtube.com/watch?v=Q2QGhvOK0MU" },
-  { title: "Bigflo & Oli — Picasso (version acoustique)", url: "https://www.youtube.com/watch?v=NuxNgehjlCY" },
-  { title: "Bigflo & Oli — 44D", url: "https://www.youtube.com/watch?v=tjsmTPVZhjk" }
+  { title: "NRJ Hits", url: "https://streaming.nrjaudio.fm/ou7xugf3s5gi" },
+  { title: "NRJ Nouveaux Hits", url: "https://streaming.nrjaudio.fm/ouucqs5n3nje" },
+  { title: "NRJ Hits Remix", url: "https://streaming.nrjaudio.fm/ou4we9htd2ko" },
+  { title: "Europe 2 Hits", url: "https://europe2.lmn.fm/vr-wr4.mp3" },
+  { title: "Skyrock PLM", url: "https://icecast.skyrock.net/s/plm_aac_128k" },
+  { title: "Skyrock Klassics", url: "https://icecast.skyrock.net/s/klassiks_aac_64k" },
+  { title: "Skyrock 100 % Français", url: "https://icecast.skyrock.net/s/francais_aac_64k" },
+  { title: "Générations Rap FR Gold", url: "https://gene-wr06.ice.infomaniak.ch/gene-wr06.mp3" },
+  { title: "OÜI FM Classic Rock", url: "https://ouifm3.ice.infomaniak.ch/ouifm3.mp3" },
+  { title: "OÜI FM Alternatif", url: "https://ouifm2.ice.infomaniak.ch/ouifm2.mp3" },
+  { title: "NRJ Classic Rock", url: "https://streaming.nrjaudio.fm/ouhm2bapu6pb" },
+  { title: "Europe 2 Happy Rock", url: "https://europe2.lmn.fm/vr-wr5.mp3" },
+  { title: "RFM Pop-Rock", url: "https://stream.rfm.fr/rfm-wr10.aac" },
+  { title: "Virgin Radio Metal", url: "https://virginmetal.ice.infomaniak.ch/virgin-radio-metal.mp3" }
 ];
